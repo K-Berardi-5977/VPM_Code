@@ -17,7 +17,7 @@ for i = 1:NumPan %iterating over the ith control point
             Cn = -cos(phi(i)-phi(j)); %C coefficient for normal velocity integral term
             Dn = (xi(i)-Xj(j))*cos(phi(i)) + (yi(i)-Yj(j))*sin(phi(i)); %D coefficient for normal velocity integral term
             Cs = sin(phi(j)-phi(i)); %C coefficient for tangent(surface) velocity integral term
-            Ds = (xi(i)-Xj(j))*sin(phi(i))+(yi(i)-Yj(j))*cos(phi(i)); %D coefficient for tangent(surface) velocity integral term
+            Ds = (xi(i)-Xj(j))*sin(phi(i))-(yi(i)-Yj(j))*cos(phi(i)); %D coefficient for tangent(surface) velocity integral term
             E = sqrt(B-A^2);
             Sj = S(j);
 

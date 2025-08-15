@@ -1,9 +1,9 @@
-function [Nx , Ny, Vxy, rp, psi, THETA] = vpm_plotstreamlines(xi, yi, Xj, Yj, phi, S, gamma, U, alphad, Cp)
-numPan = length(xi);
+function [Nx , Ny, Vxy, rp, psi, THETA, Cpxy_mask] = vpm_plotstreamlines(xi, yi, Xj, Yj, phi, S, gamma, U, alphad, Cp)
+NumPan = length(xi);
 [Nx, Ny] = calc_NxNy(xi, yi, Xj, Yj, phi, S)
 
-nGridX = numPan;                                                           % X-grid for streamlines and contours
-nGridY = numPan;                                                           % Y-grid for streamlines and contours
+nGridX = NumPan;                                                           % X-grid for streamlines and contours
+nGridY = NumPan;                                                           % Y-grid for streamlines and contours
 xVals  = [-0.3; 1.3];                                                   % X-grid extents [min, max]
 yVals  = [-.8; 0.8];                                                   % Y-grid extents [min, max]
 
@@ -43,26 +43,39 @@ for m = 1:1:nGridX   %iterating over the jth control point
     end
 
 end
-Vxy =  sqrt(Vx.^2 + Vy.^2);
-gamma_dS = gamma(:).*S(:);
-psi = U*(YY*cosd(alphad)-XX*sind(alphad));
 
-for j=1:length(gamma_dS)
+Vxy =  sqrt(Vx.^2 + Vy.^2); %velocity magnitude mesh
+Cpxy = 1-(Vxy./U).^2; %pressure coefficient mesh
+Cpxy_mask = Cpxy;
+[inC, onC] = inpolygon(XX, YY, Xj, Yj);
+Cpxy_mask(inC) = NaN;
+Cpxy_mask(onC) = NaN;
+
+
+%========= Stream Function Expression ==========%
+
+gamma_dS = gamma(:).*S(:); %determine strength of each vortex 
+psi = U*(YY*cosd(alphad)-XX*sind(alphad)); %initialize stream function variable and account for sine term
+
+%Calculate the sum of the vortex contributions to the velocity potential
+
+for j=1:NumPan
     dxp = (XX-xi(j));
     dyp = (YY-yi(j));
     rp = sqrt(dxp.^2 + dyp.^2);
-    psi = psi + (gamma_dS(j)/(2*pi))*log(rp);
+    psi = psi + (gamma_dS(j)/(2*pi))*log(rp); 
 end
 
-[row, col] = find(Cp>0.99945)
-
-in = inpolygon(XX, YY, Xj, Yj);
+in = inpolygon(XX, YY, Xj, Yj); %find mesh values within foil body
 psi_mask = psi;
-psi_mask(in) = NaN;
+psi_mask(in) = NaN; %disregard streamlines solved at mesh values that fall within the surface 
+
+%========== Plot Streamlines and Stagnation Points =========%
+[row, col] = find(Cp>0.99) %Find coordinates in field that coincide with Cp ~ 1
 
 figure; hold on; box on
-contour(XX, YY, psi_mask, 60, 'LineWidth', 0.9);
-fill(Xj, Yj, [0.15 0.15 0.15], 'EdgeColor', 'k'); % the body
+contour(XX, YY, psi_mask, 60, 'LineWidth', 0.9); %streamlines
+fill(Xj, Yj, [0.15 0.15 0.15], 'EdgeColor', 'k'); % foil body
 for i = 1:length(row)
     plot(Xj(row(i)), Yj(row(i)), 'ro', 'MarkerSize', 3, MarkerFaceColor='r')
 end

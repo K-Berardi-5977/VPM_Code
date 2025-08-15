@@ -1,53 +1,38 @@
-function [XB, YB, XC, YC, S, betaR, phiR, deltaD] = loadFoil2(c, t_max, alphad)
+function [XB, YB, XC, YC, S, betaR, phiR, deltaD] = loadFoil2(c, alphad)
 
-load("c_x_VPM.mat"); %profile x/c coordinates
-load("t_x_VPM.mat"); %profile
 
-numB = length(t_x); %iteration variable for number of boundarypoints
+foilShape = load('naca0012.dat');
 
-XB = zeros(numB,1); %initialize x-coordinate of boundary points
-YB = zeros(numB,1); %initialize y-coordinate of boundary points
+XB = foilShape(:,1); %profile X-coordinates
+YB = foilShape(:,2); %profile Y-coordinates
 
-for i = 1:numB
-    XB(i) = c*c_x(i);
-    YB(i) = t_max*c*t_x(i);
-end
-
-X_te_panels1 = linspace(XB(end-1) ,XB(end), 20)';
-Y_te_panels1 = linspace(YB(end-1), YB(end), 20)';
-
-% X_te_panels1(1) = [];
-% Y_te_panels1(1) = [];
+XB = flip(XB);
+YB = flip(YB);
+% np = 67; %number of boundary points
 % 
-% X_te_panels2 = linspace(XB(end-2), XB(end-1), 10)';
-% Y_te_panels2 = linspace(YB(end-2),YB(end-1), 10)';
-
-
-XB = vertcat(  XB(1:end-2), X_te_panels1)
-YB = vertcat( YB(1:end-2), Y_te_panels1)
-
-XB_bottom = XB(1:end-1);
-size(XB)
-size(XB_bottom)
-XB_bottom = flip(XB_bottom);
-XB = vertcat(XB, XB_bottom);
-
-
-YB_bottom = YB(1:end-1);
-YB_bottom = -1.*(flip(YB_bottom));
-YB = vertcat(YB, YB_bottom)
-
-
-numPan = length(YB) - 1; %number of panels
+% XB_top = linspace(0,1,np)';
+% XB_bottom = flip(XB_top);
+% XB_bottom(1) = [];
+% XB = vertcat(XB_bottom, XB_top)
+% 
+% for i = 1:np
+%     YB_top(i,1) = 0.594689181*(0.298222773*sqrt(XB(i)) - 0.127125232*XB(i) - 0.357907906*XB(i)^2 + 0.291984971*XB(i)^3 - 0.105174606*XB(i)^4)
+% 
+% end
+% YB_bottom = -YB_top
+% YB_bottom = flip(YB_bottom);
+% YB_bottom(1) = [];
+% YB = vertcat(YB_top, YB_bottom)
+numPan = length(YB)-1; %N-1 panels for N coordinate points
 
 
 
 edge = zeros(numPan, 1);
 for i = 1:numPan
-    edge(i) = (XB(i+1)-XB(i))*(YB(i+1)+YB(i)); %checl for direction of boundary points
+    edge(i) = (XB(i+1)-XB(i))*(YB(i+1)+YB(i)); %check for direction of boundary points
 end
 sumEdge = sum(edge);
-%
+
 % flip array if panels are oriented CCW
 if (sumEdge < 0)
     flipud(XB);

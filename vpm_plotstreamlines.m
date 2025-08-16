@@ -36,8 +36,8 @@ for m = 1:1:nGridX   %iterating over the jth control point
                  Vx(m,n) = 0;                                                % Set X-velocity equal to zero
                  Vy(m,n) = 0;                                                % Set Y-velocity equal to zero
             else                                                            % If the grid point is outside the airfoil
-                Vx(m,n) = U*cosd(alphad) + sum((gamma.*Nxx)./(2*pi));         % Compute X-velocity
-                Vy(m,n) = U*sind(alphad) + sum((gamma.*Nyy)./(2*pi));         % Compute Y-velocity
+                Vx(m,n) = U*cosd(alphad) - sum((gamma.*Nxx)./(2*pi));         % Compute X-velocity
+                Vy(m,n) = U*sind(alphad) - sum((gamma.*Nyy)./(2*pi));         % Compute Y-velocity
             end
           
     end
@@ -55,7 +55,7 @@ Cpxy_mask(onC) = NaN;
 %========= Stream Function Expression ==========%
 
 gamma_dS = gamma(:).*S(:); %determine strength of each vortex 
-psi = U*(YY*cosd(alphad)-XX*sind(alphad)); %initialize stream function variable and account for sine term
+psi = U.*(YY.*cosd(alphad)-XX.*sind(alphad)); %initialize stream function variable and account for sine term
 
 %Calculate the sum of the vortex contributions to the velocity potential
 
@@ -74,10 +74,10 @@ psi_mask(in) = NaN; %disregard streamlines solved at mesh values that fall withi
 [row, col] = find(Cp>0.99) %Find coordinates in field that coincide with Cp ~ 1
 
 figure; hold on; box on
-contour(XX, YY, psi_mask, 60, 'LineWidth', 0.9); %streamlines
+contour(XX, YY, psi_mask, 75, 'LineWidth', 0.9); %streamlines
 fill(Xj, Yj, [0.15 0.15 0.15], 'EdgeColor', 'k'); % foil body
 for i = 1:length(row)
-    plot(Xj(row(i)), Yj(row(i)), 'ro', 'MarkerSize', 3, MarkerFaceColor='r')
+    plot(xi(row(i)), yi(row(i)), 'ro', 'MarkerSize', 3, MarkerFaceColor='r')
 end
 axis equal tight
 xlabel('x/c'); ylabel('y/c');

@@ -3,12 +3,12 @@ clc; clear;
 %========== Importing NACA 0012 Airfoil Profile and Generating Panels ==========%
 U = 1; %free stream velocity
 c = 1; %chord length
-alphad =10;
+alphad = 10;
 alpha = alphad*(pi/180);
 
 
 %function to load foil profile
-[XB, YB, XC, YC, S, betaR, phiR, deltaD] = loadFoil2(c, alphad);
+[XB, YB, XC, YC, S, betaR, phiR, deltaD, betaD] = loadFoil2(c, alphad);
 
 
 %========== Geometric Integral Terms ==========%
@@ -17,7 +17,7 @@ alpha = alphad*(pi/180);
 
 %========== Linear SoE Solution, Pressure Coefficient ==========%
 
-[gamma, V_s, Cp, NumPan, Gamma, A, b, gamma_dS] = solvePanels(K, L, betaR, S, U);
+[gamma, V_s, Cp, NumPan, Gamma, A, b, gamma_dS] = solvePanels(K, L, betaR, S, U, betaD);
 
 [Nx , Ny, Vxy, rp, psi, THETA, Cpxy_mesh] = vpm_plotstreamlines(XC, YC, XB, YB, phiR, S, gamma, U, alphad, Cp);
 
@@ -25,16 +25,16 @@ alpha = alphad*(pi/180);
 
 
 
-figure; hold on; axis equal;
-
-plot(XB,YB, 'b.', MarkerSize=7);
-plot(XC, YC, 'r*');
-plot(XB,YB,'k');
-% plot(x_c(indices), y_c(indices), 'bo', MarkerSize=7, MarkerFaceColor='c')
-title('Discretized Body Panels')
-xlabel('X')
-ylabel('Y')
-legend('Panel Bounds', 'Control Points')
+% figure; hold on; axis equal;
+% 
+% plot(XB,YB, 'b.', MarkerSize=7);
+% plot(XC, YC, 'r*');
+% plot(XB,YB,'k');
+% % plot(x_c(indices), y_c(indices), 'bo', MarkerSize=7, MarkerFaceColor='c')
+% title('Discretized Body Panels')
+% xlabel('X')
+% ylabel('Y')
+% legend('Panel Bounds', 'Control Points')
 
 
 

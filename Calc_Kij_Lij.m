@@ -33,8 +33,7 @@ for i = 1:NumPan %iterating over the ith control point
             %the ith point
             L(i,j) = (Cs/2)*log((Sj^2 + 2*A*Sj + B)/B) + ((Ds - A*Cs)/E)*(atan2(Sj+A, E) ...
                 -atan2(A, E));
-            % L(i,j) = ((D-A*C)/(2*E))*log((Sj^2 + 2*A*Sj + B)/B) - C*(atan2(Sj+A, E) ...
-            %     -atan2(A, E));
+
        
     if (isnan(K(i,j)) || isinf(K(i,j)) || ~isreal(K(i,j)))
         K(i,j) = 0;
@@ -47,7 +46,7 @@ for i = 1:NumPan %iterating over the ith control point
     end
 
     end
-
+   
 end
 end
 end

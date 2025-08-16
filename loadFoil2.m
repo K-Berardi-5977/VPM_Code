@@ -1,28 +1,29 @@
-function [XB, YB, XC, YC, S, betaR, phiR, deltaD] = loadFoil2(c, alphad)
+function [XB, YB, XC, YC, S, betaR, phiR, deltaD, betaD] = loadFoil2(c, alphad)
 
 
-foilShape = load('naca0012.dat');
-
-XB = foilShape(:,1); %profile X-coordinates
-YB = foilShape(:,2); %profile Y-coordinates
-
-XB = flip(XB);
-YB = flip(YB);
-% np = 67; %number of boundary points
+% foilShape = load('naca0012.dat');
 % 
-% XB_top = linspace(0,1,np)';
-% XB_bottom = flip(XB_top);
-% XB_bottom(1) = [];
-% XB = vertcat(XB_bottom, XB_top)
+% XB = foilShape(:,1); %profile X-coordinates
+% YB = foilShape(:,2); %profile Y-coordinates
 % 
-% for i = 1:np
-%     YB_top(i,1) = 0.594689181*(0.298222773*sqrt(XB(i)) - 0.127125232*XB(i) - 0.357907906*XB(i)^2 + 0.291984971*XB(i)^3 - 0.105174606*XB(i)^4)
-% 
-% end
-% YB_bottom = -YB_top
-% YB_bottom = flip(YB_bottom);
-% YB_bottom(1) = [];
-% YB = vertcat(YB_top, YB_bottom)
+% XB = flip(XB);
+% YB = flip(YB);
+np = 151; %number of boundary points
+
+XB_top = linspace(0,1,np)';
+XB_bottom = flip(XB_top);
+
+for i = 1:length(XB_bottom)
+    YB_bottom(i,1) = -0.594689181*(0.298222773*sqrt(XB_bottom(i)) - 0.127125232*XB_bottom(i) - 0.357907906*XB_bottom(i)^2 + 0.291984971*XB_bottom(i)^3 - 0.105174606*XB_bottom(i)^4)
+end 
+
+XB_bottom(end) = [];
+XB = vertcat(XB_bottom, XB_top)
+
+
+YB_top = -flip(YB_bottom)
+YB_bottom(end) = [];
+YB = vertcat(YB_bottom, YB_top)
 numPan = length(YB)-1; %N-1 panels for N coordinate points
 
 

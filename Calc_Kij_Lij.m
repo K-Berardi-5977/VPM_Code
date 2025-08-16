@@ -17,7 +17,7 @@ for i = 1:NumPan %iterating over the ith control point
             Cn = -cos(phi(i)-phi(j)); %C coefficient for normal velocity integral term
             Dn = (xi(i)-Xj(j))*cos(phi(i)) + (yi(i)-Yj(j))*sin(phi(i)); %D coefficient for normal velocity integral term
             Cs = sin(phi(j)-phi(i)); %C coefficient for tangent(surface) velocity integral term
-            Ds = (xi(i)-Xj(j))*sin(phi(i))+(yi(i)-Yj(j))*cos(phi(i)); %D coefficient for tangent(surface) velocity integral term
+            Ds = (xi(i)-Xj(j))*sin(phi(i))-(yi(i)-Yj(j))*cos(phi(i)); %D coefficient for tangent(surface) velocity integral term
             E = sqrt(B-A^2);
             Sj = S(j);
 
@@ -33,8 +33,7 @@ for i = 1:NumPan %iterating over the ith control point
             %the ith point
             L(i,j) = (Cs/2)*log((Sj^2 + 2*A*Sj + B)/B) + ((Ds - A*Cs)/E)*(atan2(Sj+A, E) ...
                 -atan2(A, E));
-            % L(i,j) = ((D-A*C)/(2*E))*log((Sj^2 + 2*A*Sj + B)/B) - C*(atan2(Sj+A, E) ...
-            %     -atan2(A, E));
+
        
     if (isnan(K(i,j)) || isinf(K(i,j)) || ~isreal(K(i,j)))
         K(i,j) = 0;
@@ -47,7 +46,7 @@ for i = 1:NumPan %iterating over the ith control point
     end
 
     end
-
+   
 end
 end
 end
